@@ -5,6 +5,7 @@ import AppRoutes from './Routes';
 const App: React.FC = () => {
   return (
     <div className="App">
+      
       <AppRoutes />
     </div>
   );

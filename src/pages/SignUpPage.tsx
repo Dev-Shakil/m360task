@@ -1,16 +1,41 @@
-import React from "react";
+import React, {useEffect} from "react";
 import AuthLayout from "../components/Layout/AuthLayout";
 import { Button, Checkbox, Divider, Form, Input } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {toast} from "react-toastify"
+import { useRegisterUserMutation } from "services/authApi";
+// import {useDispatch} from "react-redux"
+// import { setUser } from "features/authSlice";
 
-const onFinish = (values: any) => {
-  console.log("Received values of form: ", values);
-};
 const SignUpPage = () => {
+  const navigate = useNavigate();
+  const [registerUser,{data,isSuccess,isLoading,isError,error}] = useRegisterUserMutation();
+  
+  const onFinish = async (values: any) => {
+    console.log('Received values of form: ', values);
+    
+    
+      await registerUser(values)
+    
+  };
+  console.log(data)
+  useEffect(()=>{
+    if(isSuccess){
+      toast.success("User Registration Done Successfully")
+      
+      navigate("/signin")
+    }
+  },[isSuccess])
+  useEffect(() => {
+    if (isError) {
+      toast.success(`Error : ${error}`)
+      
+    }
+  }, [isError,error])
   return (
     <AuthLayout>
-      <div className="min-h-[92vh] gap-y-5 flex w-[540px] mx-auto items-center pt-16 flex-col">
+      <div className="min-h-[92vh] gap-y-5 flex w-[540px] mx-auto items-center flex-col">
         <h1 className="font-bold text-[26px] text-[#323B4B]">Sign Up</h1>
         <p className="font-medium text-lg text-[#8A94A6]">
           Create an account to continue!
@@ -52,7 +77,7 @@ const SignUpPage = () => {
               <Input
                 prefix={<UserOutlined className="site-form-item-icon mr-3" />}
                 type="email"
-                className="p-4 h-[48px] text-lg font-medium"
+                className="p-2 h-[48px] text-lg font-medium"
                 placeholder="Your Email"
               />
             </Form.Item>
@@ -64,7 +89,7 @@ const SignUpPage = () => {
               <Input
                 prefix={<UserOutlined className="site-form-item-icon mr-3" />}
                 type="text"
-                className="p-4 h-[48px] text-lg font-medium"
+                className="p-2 h-[48px] text-lg font-medium"
                 placeholder="Your Name"
               />
             </Form.Item>
@@ -78,7 +103,7 @@ const SignUpPage = () => {
               <Input.Password
                 prefix={<LockOutlined className="site-form-item-icon mr-3" />}
                 type="password"
-                className="p-4 h-[48px] text-lg"
+                className="p-2 h-[48px] text-lg"
                 placeholder="Create Password"
               />
             </Form.Item>
@@ -90,16 +115,16 @@ const SignUpPage = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button
-              htmlType="submit"
-              className="w-full bg-blue-500 text-white py-5 text-lg rounded-xl flex items-center justify-center"
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white py-2 text-lg rounded-xl flex items-center justify-center "
             >
-              Sign Up
-            </Button>
+              {isLoading?"Loading":"Sign Up"}
+            </button>
             <div className="text-center font-medium text-lg text-gray-500 mt-3">
               Already have an account?{" "}
               <Link to="/signin" className="text-blue-600">
-                Sign Up
+                Sign In
               </Link>
             </div>
           </Form.Item>
